@@ -112,7 +112,7 @@ local function Button_OnEnter(self, button)
 		end
 			GameTooltip:SetHyperlink(LOOT_REPORT[self.index]["loot"])
 end
-		-- cursor on button hide
+		-- cursor leave button hide
 local function Button_OnLeave()
 		local focus = GetMouseFocus() or WorldFrame
 		if focus ~= GameTooltip and focus:GetParent() ~= GameTooltip then
@@ -150,14 +150,11 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 		end
 	initMenu()
 	elseif event == "CHAT_MSG_LOOT" then
+			--event msg loot
 		local lootstring, _, _, _, player = ...
 		local itemLink 		= string.match(lootstring,"|%x+|Hitem:.-|h.-|h|r")
 		local itemString 	= string.match(itemLink, "item[%-?%d:]+")
 		local _, _, quality, _, _, class, subclass, _, equipSlot, texture, _, ClassID, SubClassID = GetItemInfo(itemString)
-		--local i = {2, 11, 12, 13, 14, 15, 16, 17}
-				--local j = {1, 3, 5, 6, 7, 8, 9, 10}
-				--local SlotP = select(9, GetItemInfo(GetInventoryItemLink("player", i)))
-				--local ClassP = select(7, GetItemInfo(GetInventoryItemLink("player", j)))
 		-- TEST MODE IF DISABLED = 1
 		local Disabled = 0		
 			if LOOT_CFG["myself"] == false and UnitName("player") == player then 
@@ -165,9 +162,7 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 			elseif LOOT_CFG["minquality"] > quality then 
 				Disabled = 1	
 			elseif LOOT_CFG["equiponly"] == true and (ClassID <= 1 or ClassID > 4 ) then 
-				Disabled = 1
-			--elseif (SlotP and ClassP) and (ClassP == subclass or SlotP == equipSlot) then
-				--Disabled = 1
+				Disabled = 1			
 			end		
 			if player and Disabled == 0 then 
 				if #LOOT_REPORT >= LOOT_CFG["maxloots"] then table.remove(LOOT_REPORT, 1)
@@ -180,18 +175,12 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 				}				
 				local 	h,m = GetGameTime()
 				local 	numButtons = #LOOT_REPORT
-				--local i = {2, 11, 12, 13, 14, 15, 16, 17}
-				--local j = {1, 3, 5, 6, 7, 8, 9, 10}
-				--local SlotP = select(9, GetItemInfo(GetInventoryItemLink("player", i)))
-				--local ClassP = select(7, GetItemInfo(GetInventoryItemLink("player", j)))
-				--if (SlotP and ClassP) and (ClassP ~= subclass or SlotP ~= equipSlot) then
 					for index = 1, numButtons do	
 						Menu[index]:SetText( h .. ":".. m .. " " .. color(LOOT_REPORT[index]["player"]) .. " " ..  LOOT_REPORT[index]["loot"] .. "<" .. LOOT_REPORT[index]["ilv"].. "-" .. LOOT_REPORT[index]["slot"].. ">")					
 						Menu[index]:Show()
 						Menu:SetSize(MENU_WIDTH, (MENU_BUFFER * 5) + (fontHeight * 3) + MENU_SPACING + ((BUTTON_HEIGHT + BUTTON_SPACING) * numButtons - BUTTON_SPACING))
 					end
 				Menu:Show()
-				--end
 			end	
 	end
 end)
