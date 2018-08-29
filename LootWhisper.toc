@@ -1,0 +1,7 @@
+## Interface:80000
+## Title:LootWhisper
+## Notes:一款小巧的毛装助手，利器！
+## Author:gmacro & Lombra &Inc
+## Version:80000
+
+LootWhisper.lua
