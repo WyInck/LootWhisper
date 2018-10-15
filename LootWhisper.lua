@@ -13,7 +13,7 @@ local LOOT_REPORT = {}
 local LOOT_CFG = {
 		maxloots = 20,    
 		-- menu shows max limit
-		myself = true,   
+		myself = false,   
 		-- show or not show player self loots
 		minquality = 3,   
 		-- minquality comes from http://wowwiki.wikia.com/wiki/API_TYPE_Quality
