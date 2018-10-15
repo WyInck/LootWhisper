@@ -174,7 +174,11 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 					if equipSlot == 'INVTYPE_CLOAK' then 
 						Disabled = 0
 					else
-						Disabled = 1
+						if equipSlot == 'INVTYPE_WEAPON' then 
+							Disabled = 0
+						else 
+							Disabled = 1
+						end
 					end
 				end
 			end
