@@ -149,34 +149,34 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 		local itemLink = string.match(lootstring,"|%x+|Hitem:.-|h.-|h|r")
 		local itemString = string.match(itemLink, "item[%-?%d:]+")
 		local _, _, quality, _, _, class, subclass, _, equipSlot, texture, _, ClassID, SubClassID = GetItemInfo(itemString)
-		local Disabled = 0		
+		-- itemfilter
+		local Disabled = 0
 		if LOOT_CFG["myself"] == false and UnitName("player") == player then 
 			Disabled = 1
 		end
 		if LOOT_CFG["minquality"] > quality then 
 			Disabled = 1
 		end
-		if LOOT_CFG["equiponly"] == true and (ClassID <= 1 or ClassID > 4 ) then 
+		--[[if LOOT_CFG["equiponly"] == true and (ClassID <= 1 or ClassID > 4 ) then 
 			Disabled = 1
-		end
+		end--]]
+		local slotsTab = {
+			'INVTYPE_HEAD',
+			'INVTYPE_SHOULDER',
+			'INVTYPE_CHEST',
+			'INVTYPE_WAIST',
+			'INVTYPE_LEGS',
+			'INVTYPE_FEET',
+			'INVTYPE_WRIST',
+			'INVTYPE_HAND'
+		}
 		if LOOT_CFG['equiponly'] == true then
 			local playerItemLink = GetInventoryItemLink('player', 1)
 			if playerItemLink then 
-				local itemType = select(7, GetItemInfo(playerItemLink))
-				if subclass == itemType and (ClassID <= 1 or ClassID > 4) == false then 
-					Disabled = 0
-				else
-					if subclass == 'Miscellaneous' and (ClassID <= 1 or ClassID > 4) == false then 
-						Disabled = 0
-					else
-						Disabled = 1
-					end
-					if equipSlot == 'INVTYPE_CLOAK' then 
-						Disabled = 0
-					else
-						if equipSlot == 'INVTYPE_WEAPON' then 
-							Disabled = 0
-						else 
+				local playerItemType = select(7, GetItemInfo(playerItemLink))
+				if subclass ~= playerItemType and (ClassID <= 1 or ClassID > 4) == true then 
+					for _, v in pairs(slotsTab) do
+						if v == equipSlot then 
 							Disabled = 1
 						end
 					end
