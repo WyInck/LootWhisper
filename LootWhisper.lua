@@ -166,19 +166,17 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 			'INVTYPE_WRIST',
 			'INVTYPE_HAND'
 		}
-		if LOOT_CFG['equiponly'] == true then
-			local playerItemLink = GetInventoryItemLink('player', 1)
-			if playerItemLink then 
-				local playerItemType = select(7, GetItemInfo(playerItemLink))
-				if subclass ~= playerItemType and (ClassID <= 1 or ClassID > 4) == true then 
-					for _, v in pairs(slotsTab) do
-						if v == equipSlot then 
-							Disabled = 1
-						end
+		local playerItemLink = GetInventoryItemLink('player', 1)
+		if playerItemLink then 
+			local playerItemType = select(7, GetItemInfo(playerItemLink))
+			if subclass ~= playerItemType then 
+				for _, v in pairs(slotsTab) do
+					if v == equipSlot then 
+						Disabled = 1
 					end
 				end
 			end
-		end
+		end		
 		if player and Disabled == 0 then 
 			if #LOOT_REPORT >= LOOT_CFG["maxloots"] then 
 				table.remove(LOOT_REPORT, 1)
