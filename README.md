@@ -2,6 +2,10 @@
 
 addon of wow - world of warcraft , about the loot msg.
 
+-- 2018.11.02
+
+fixed a bug.
+
 -- 2018.10.15
 
 8.0.1 release
