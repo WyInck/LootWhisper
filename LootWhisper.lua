@@ -54,7 +54,6 @@ local Menu = CreateFrame("Frame", "LootWhisper", UIParent)
 	})
 	Menu:SetBackdropColor(.75, .75, .75)
 	Menu:SetBackdropBorderColor(0, 1, 1, 1)
-	--tinsert(UISpecialFrames, Menu:GetName())
 -- menu button and text
 local resetClose = CreateFrame("Button", "resetClose", Menu, "UIPanelCloseButton")
 	resetClose:SetSize(24, 24)
