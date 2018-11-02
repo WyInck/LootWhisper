@@ -6,7 +6,7 @@ Addon of WoW - World of Warcraft , about the loot msg.
 2018,11,03
 -----
   * Added the locales. zhCN and enUS only, you can build others if you need.
-    * 创建了本地化文件，只弄了中文和英文语系。
+    * 创建了本地化文件，中英语系，如果你需要其他的，可自行创建。
 
 2018,11,02
 -----
