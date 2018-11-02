@@ -8,7 +8,7 @@ fixed a bug.
 
 -- 2018.10.15
 
-[*]8.0.1 live supported
+[8.0.1 live supported]
 
 add a line what if the same armor or miscellaneous equipments would be listed in the menu. 
 
