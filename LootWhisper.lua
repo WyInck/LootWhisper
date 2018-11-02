@@ -157,9 +157,6 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 		if LOOT_CFG["minquality"] > quality then 
 			Disabled = 1
 		end
-		--[[if LOOT_CFG["equiponly"] == true and (ClassID <= 1 or ClassID > 4 ) then 
-			Disabled = 1
-		end--]]
 		local slotsTab = {
 			'INVTYPE_HEAD',
 			'INVTYPE_SHOULDER',
