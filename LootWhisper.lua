@@ -1,6 +1,6 @@
 -- thanks the coed author gmacro and Lombra's support
 -- http://www.wowinterface.com/forums/showthread.php?t=55021
-
+local L = LibStub("AceLocale-3.0"):GetLocale("LootWhisper")
 local ADDON = ...
 local fontName, fontHeight, fontFlags = GameFontNormal:GetFont()
 local BUTTON_HEIGHT = fontHeight + 4
@@ -13,9 +13,9 @@ local LOOT_REPORT = {}
 local LOOT_CFG = {
 		maxloots = 20,    
 		-- menu shows max limit
-		myself = false,   
+		myself = true,   
 		-- show or not show player self loots
-		minquality = 3,   
+		minquality = 2,   
 		-- minquality comes from http://wowwiki.wikia.com/wiki/API_TYPE_Quality
 		equiponly = true
 		-- show equiponly items
@@ -62,18 +62,18 @@ local header_desc = Menu:CreateFontString()
 	header_desc:SetPoint("TOPLEFT", Menu, "TOPLEFT", MENU_BUFFER, -MENU_BUFFER)
 	header_desc:SetFont(fontName, fontHeight)
 	header_desc:SetTextColor(0, 1, 1, 1)
-	header_desc:SetText("毛装助手" .. "     " .. "8.0" .. "     " .. "LIVE版")
+	header_desc:SetText(L["LootWhisper"] .. "     " .. "8.0" .. "     " .. L["LIVE"])
 local click_desc = Menu:CreateFontString()
 	click_desc:SetPoint("BOTTOMLEFT", Menu, "BOTTOMLEFT", MENU_BUFFER, MENU_BUFFER)
 	click_desc:SetFont(fontName, fontHeight)
 	click_desc:SetTextColor(0, 1, 1, 1)
-	click_desc:SetText("单击装备:毛装")
+	click_desc:SetText(L["ClickForIt"])
 
 local reset_desc = Menu:CreateFontString()
 	reset_desc:SetPoint("BOTTOMRIGHT", Menu, "BOTTOMRIGHT", -MENU_BUFFER, MENU_BUFFER)
 	reset_desc:SetFont(fontName, fontHeight)
 	reset_desc:SetTextColor(0, 1, 1, 1)
-	reset_desc:SetText("单击关闭:重置")
+	reset_desc:SetText(L["CloseReset"])
 ----------------------------------------------------------- functions -----------------------------------------------------------
 -- initMenu
 local function initMenu()
@@ -96,7 +96,7 @@ end
 -- click button shows whisper msg
 local function Button_OnClick(self, button, down)
 	if button == "RightButton" or "LeftButton" then
-		SendChatMessage("大佬你好，这东西 " .. LOOT_REPORT[self.index]["loot"] .. " 你要吗？不要的话，我跪求一发，非常感谢！", "WHISPER", nil, LOOT_REPORT[self.index]["player"])				
+		SendChatMessage(L["Hi, Do U need the"] .. LOOT_REPORT[self.index]["loot"] .. L["? I really need it if U dont, ty!"], "WHISPER", nil, LOOT_REPORT[self.index]["player"])				
 	end
 end
 -- cursor enter button shows tips
@@ -168,7 +168,7 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 			'INVTYPE_FEET',
 			'INVTYPE_WRIST',
 			'INVTYPE_HAND'
-		}
+		}	
 		local playerItemLink = GetInventoryItemLink('player', 1)
 		if playerItemLink then 
 			local playerItemType = select(7, GetItemInfo(playerItemLink))
@@ -179,7 +179,9 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 					end
 				end
 			end
-		end		
+		end
+		-- filter test
+		-- print(equipSlot, Disabled)
 		if player and Disabled == 0 then 
 			if #LOOT_REPORT >= LOOT_CFG["maxloots"] then 
 				table.remove(LOOT_REPORT, 1)
@@ -209,4 +211,9 @@ SlashCmdList["LOOTWHISPER"] = function(args)
 		Menu:SetPoint('CENTER',0,0)
 		Menu:Show()
 	end
+	local t0 = L['Welcome to use the LootWhisper, there is some tips you need to know:']
+	local t1 = L['EQUIPMENTS - Left/Right Clicked will send the whisper message to the owner.']
+	local t2 = L['RESET AND CLOESED - It will reset and close the menu if you leftclicked the close button.']
+	local t3 = L['RESET ONLY - It only reset if you rightclicked the close button.']
+	print( t0..'\n'..'|cFF00FFFF'..t1..'\n'..t2..'\n'..t3..'|r')
 end
