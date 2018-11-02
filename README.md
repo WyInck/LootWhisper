@@ -2,6 +2,11 @@
 
 Addon of WoW - World of Warcraft , about the loot msg.
 
+-----
+2018,11,03
+-----
+  * Added the locales. zhCN and enUS only, you can build others if you need.
+
 2018,11,02
 -----
   * Fixed a bug.
