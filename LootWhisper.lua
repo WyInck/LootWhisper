@@ -17,8 +17,12 @@ local LOOT_CFG = {
 		-- show or not show player self loots
 		minquality = 3,   
 		-- minquality comes from http://wowwiki.wikia.com/wiki/API_TYPE_Quality
-		equiponly = true
+		equiponly = true,
 		-- show equiponly items
+		samearmor = true,
+		-- same armor
+		ilvFilter = true
+		-- itemLevel filter
 	}
 -- colors 
 local string_format = string.format
@@ -159,29 +163,77 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 		if LOOT_CFG['equiponly'] == true and (ClassID <= 1 or ClassID > 4 ) then
 			Disabled = 1
 		end
-		local slotsTab = {
-			'INVTYPE_HEAD',
-			'INVTYPE_SHOULDER',
-			'INVTYPE_CHEST',
-			'INVTYPE_WAIST',
-			'INVTYPE_LEGS',
-			'INVTYPE_FEET',
-			'INVTYPE_WRIST',
-			'INVTYPE_HAND'
-		}	
-		local playerItemLink = GetInventoryItemLink('player', 1)
-		if playerItemLink then 
-			local playerItemType = select(7, GetItemInfo(playerItemLink))
-			if subclass ~= playerItemType then 
-				for _, v in pairs(slotsTab) do
-					if v == equipSlot then 
-						Disabled = 1
+		if LOOT_CFG['ilvFilter'] == true then
+			for i = 1, 17 do
+				local itemLinkPlayer = GetInventoryItemLink('player', i)
+				if itemLinkPlayer then
+					local itemInfoPlayer = {GetItemInfo(itemLinkPlayer)} 
+					local itemInfo = {GetItemInfo(itemString)}
+					--local 1, 2, 3, 4, p, m = Name, Ilv, Slot, ItemType, player, msg
+					for kp1, vp1 in pairs(itemInfoPlayer)do
+						for k1, v1 in pairs(itemInfo) do
+							if kp1 == 1  and k1 == 1 then
+								if vp1 ~= v1 then 
+									for kp3, vp3 in pairs(itemInfoPlayer) do
+										for k3, v3 in pairs(itemInfo) do
+											if kp3 == 9 and k3 == 9 then 
+												if vp3 == v3 then
+													for kp2, vp2 in pairs(itemInfoPlayer) do
+														for k2, v2 in pairs(itemInfo) do
+															if kp2 == 4 and k2 == 4 then
+																if vp2 - 5 > v2 then
+																	Disabled = 1
+																	--print(kp2..'-'..vp2..'-'..k2..'-'..v2..'-'..Disabled)
+																end
+															end
+														end
+													end
+												end
+											end
+										end
+									end
+								elseif vp1 == v1 then
+									for kp2, vp2 in pairs(itemInfoPlayer) do
+										for k2, v2 in pairs(itemInfo) do
+											if kp2 == 4 and k2 == 4 then
+												if vp2 > v2 then 
+													Disabled = 1
+												end
+											end
+										end
+									end
+								end
+							end
+						end
 					end
 				end
 			end
 		end
+		if LOOT_CFG['samearmor'] == true then
+			local slotsTab = {
+				'INVTYPE_HEAD',
+				'INVTYPE_SHOULDER',
+				'INVTYPE_CHEST',
+				'INVTYPE_WAIST',
+				'INVTYPE_LEGS',
+				'INVTYPE_FEET',
+				'INVTYPE_WRIST',
+				'INVTYPE_HAND'
+			}	
+			local playerItemLink = GetInventoryItemLink('player', 1)
+			if playerItemLink then 
+				local playerItemType = select(7, GetItemInfo(playerItemLink))
+				if subclass ~= playerItemType then 
+					for _, v in pairs(slotsTab) do
+						if v == equipSlot then 
+							Disabled = 1
+						end
+					end
+				end
+			end
+		end	
+		--print(Disabled)
 		-- filter test
-		-- print(equipSlot, Disabled)
 		if player and Disabled == 0 then 
 			if #LOOT_REPORT >= LOOT_CFG["maxloots"] then 
 				table.remove(LOOT_REPORT, 1)
