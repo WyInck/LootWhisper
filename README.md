@@ -3,7 +3,7 @@
 Addon of WoW - World of Warcraft , about the loot msg.
   * 一款魔兽世界插件，拾取相关。
 -----
-2018.11.03
+2018,11,03
 -----
 * Added lines about the filter that loot-item's ilv lower than your equipment.
   * 增加了装等过滤，同名称装备拾取低于自身，非同名称装备低于自身5个装等，不再显示。
