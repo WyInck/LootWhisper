@@ -24,7 +24,7 @@ Addon of WoW - World of Warcraft , about the loot msg.
     * 支持游戏最新版本8.0.1。
 
   * Added lines that different armor or miscellaneous equipments wont be listed in the menu. 
-    * 增加了不同护甲类型的过滤，自己无法装备的物品，不再显示。
+    * 增加了不同护甲类型的过滤，自己无法装备的护甲，不再显示。
 
 2018,08,29 
 -----
