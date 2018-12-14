@@ -3,8 +3,6 @@
 ## Notes: Quick Whisper For a Equipments!
 ## Author: gmacro & Lombra
 ## Version: 8.1.0
-## SavedVariablesPerCharacter: LootWhisperperdb
-## SavedVariables: LootWhisperdb
 
 Libs\LibStub\LibStub.lua
 Libs\AceLocale-3.0\AceLocale-3.0.lua
