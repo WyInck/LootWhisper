@@ -3,6 +3,10 @@
 Addon of WoW - World of Warcraft , about the loot msg.
   * 一款魔兽世界插件，拾取相关。
 -----
+2019,03,24
+-----
+  * Fixed a bug that Gem wont be filtered.
+    * 修复了宝石不被过滤的BUG。
 2018,11,03
 -----
 * Added lines about the filter that loot-item's ilv lower than your equipment.
