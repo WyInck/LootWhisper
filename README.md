@@ -10,7 +10,7 @@ Addon of WoW - World of Warcraft , about the loot msg.
 
 2018,11,03
 -----
-* Added lines about the filter that loot-item's ilv lower than your equipment.
+* Added lines about the filter that loot-item's ilv lower than your equipments.
   * 增加了装等过滤，同名称装备拾取低于自身，非同名称装备低于自身5个装等，不再显示。
 * Added the locales. zhCN and enUS only, you can build others if you need.
   * 创建了本地化文件，中英语系，如果你需要其他的，可自行创建。
