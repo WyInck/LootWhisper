@@ -160,7 +160,7 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 		if LOOT_CFG["minquality"] > quality then 
 			Disabled = 1
 		end
-		if LOOT_CFG['equiponly'] == true and (ClassID <= 1 or ClassID > 4 ) then
+		if LOOT_CFG['equiponly'] == true and (ClassID <= 1 or ClassID > 4 or ClassID == 3) then
 			Disabled = 1
 		end
 		if LOOT_CFG['ilvFilter'] == true then
