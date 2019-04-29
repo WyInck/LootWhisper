@@ -150,40 +150,42 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 	elseif event == "CHAT_MSG_LOOT" then
 		local lootstring, _, _, _, player = ...
 		local itemLink = string.match(lootstring,"|%x+|Hitem:.-|h.-|h|r")
-		local itemString = string.match(itemLink, "item[%-?%d:]+")
-		local _, _, quality, _, _, class, subclass, _, equipSlot, texture, _, ClassID, SubClassID = GetItemInfo(itemString)
-		-- itemfilter
-		local Disabled = 0
-		if LOOT_CFG["myself"] == false and UnitName("player") == player then 
-			Disabled = 1
-		end
-		if LOOT_CFG["minquality"] > quality then 
-			Disabled = 1
-		end
-		if LOOT_CFG['equiponly'] == true and (ClassID <= 1 or ClassID > 4 or ClassID == 3) then
-			Disabled = 1
-		end
-		if LOOT_CFG['ilvFilter'] == true then
-			for i = 1, 17 do
-				local itemLinkPlayer = GetInventoryItemLink('player', i)
-				if itemLinkPlayer then
-					local itemInfoPlayer = {GetItemInfo(itemLinkPlayer)} 
-					local itemInfo = {GetItemInfo(itemString)}
-					--local 1, 2, 3, 4, p, m = Name, Ilv, Slot, ItemType, player, msg
-					for kp1, vp1 in pairs(itemInfoPlayer)do
-						for k1, v1 in pairs(itemInfo) do
-							if kp1 == 1  and k1 == 1 then
-								if vp1 ~= v1 then 
-									for kp3, vp3 in pairs(itemInfoPlayer) do
-										for k3, v3 in pairs(itemInfo) do
-											if kp3 == 9 and k3 == 9 then 
-												if vp3 == v3 then
-													for kp2, vp2 in pairs(itemInfoPlayer) do
-														for k2, v2 in pairs(itemInfo) do
-															if kp2 == 4 and k2 == 4 then
-																if vp2 - 5 > v2 then
-																	Disabled = 1
-																	--print(kp2..'-'..vp2..'-'..k2..'-'..v2..'-'..Disabled)
+		if itemLink then 
+			local itemString = string.match(itemLink, "item[%-?%d:]+")
+			local _, _, quality, _, _, class, subclass, _, equipSlot, texture, _, ClassID, SubClassID = GetItemInfo(itemString)
+			-- itemfilter
+			local Disabled = 0
+			if LOOT_CFG["myself"] == false and UnitInParty('player') == false then 
+				Disabled = 1
+			end
+			if LOOT_CFG['equiponly'] == true and (ClassID <= 1 or ClassID > 4 or ClassID == 3) then
+				Disabled = 1
+			end
+			if LOOT_CFG["minquality"] > quality then 
+				Disabled = 1
+			end
+			if LOOT_CFG['ilvFilter'] == true then
+				for i = 1, 17 do
+					local itemLinkPlayer = GetInventoryItemLink('player', i)
+					if itemLinkPlayer then
+						local itemInfoPlayer = {GetItemInfo(itemLinkPlayer)} 
+						local itemInfo = {GetItemInfo(itemString)}
+						--local 1, 2, 3, 4, p, m = Name, Ilv, Slot, ItemType, player, msg
+						for kp1, vp1 in pairs(itemInfoPlayer)do
+							for k1, v1 in pairs(itemInfo) do
+								if kp1 == 1  and k1 == 1 then
+									if vp1 ~= v1 then 
+										for kp3, vp3 in pairs(itemInfoPlayer) do
+											for k3, v3 in pairs(itemInfo) do
+												if kp3 == 9 and k3 == 9 then 
+													if vp3 == v3 then
+														for kp2, vp2 in pairs(itemInfoPlayer) do
+															for k2, v2 in pairs(itemInfo) do
+																if kp2 == 4 and k2 == 4 then
+																	if vp2 - 5 > v2 then
+																		Disabled = 1
+																		--print(kp2..'-'..vp2..'-'..k2..'-'..v2..'-'..Disabled)
+																	end
 																end
 															end
 														end
@@ -191,13 +193,13 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 												end
 											end
 										end
-									end
-								elseif vp1 == v1 then
-									for kp2, vp2 in pairs(itemInfoPlayer) do
-										for k2, v2 in pairs(itemInfo) do
-											if kp2 == 4 and k2 == 4 then
-												if vp2 > v2 then 
-													Disabled = 1
+									elseif vp1 == v1 then
+										for kp2, vp2 in pairs(itemInfoPlayer) do
+											for k2, v2 in pairs(itemInfo) do
+												if kp2 == 4 and k2 == 4 then
+													if vp2 > v2 then 
+														Disabled = 1
+													end
 												end
 											end
 										end
@@ -208,51 +210,51 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 					end
 				end
 			end
-		end
-		if LOOT_CFG['samearmor'] == true then
-			local slotsTab = {
-				'INVTYPE_HEAD',
-				'INVTYPE_SHOULDER',
-				'INVTYPE_CHEST',
-				'INVTYPE_WAIST',
-				'INVTYPE_LEGS',
-				'INVTYPE_FEET',
-				'INVTYPE_WRIST',
-				'INVTYPE_HAND'
-			}	
-			local playerItemLink = GetInventoryItemLink('player', 1)
-			if playerItemLink then 
-				local playerItemType = select(7, GetItemInfo(playerItemLink))
-				if subclass ~= playerItemType then 
-					for _, v in pairs(slotsTab) do
-						if v == equipSlot then 
-							Disabled = 1
+			if LOOT_CFG['samearmor'] == true then
+				local slotsTab = {
+					'INVTYPE_HEAD',
+					'INVTYPE_SHOULDER',
+					'INVTYPE_CHEST',
+					'INVTYPE_WAIST',
+					'INVTYPE_LEGS',
+					'INVTYPE_FEET',
+					'INVTYPE_WRIST',
+					'INVTYPE_HAND'
+				}	
+				local playerItemLink = GetInventoryItemLink('player', 1)
+				if playerItemLink then 
+					local playerItemType = select(7, GetItemInfo(playerItemLink))
+					if subclass ~= playerItemType then 
+						for _, v in pairs(slotsTab) do
+							if v == equipSlot then 
+								Disabled = 1
+							end
 						end
 					end
 				end
+			end	
+			--print(Disabled)
+			-- filter test
+			if player and Disabled == 0 then 
+				if #LOOT_REPORT >= LOOT_CFG["maxloots"] then 
+					table.remove(LOOT_REPORT, 1)
+				end
+				LOOT_REPORT[#LOOT_REPORT + 1] = {
+					player = player,
+					loot = itemLink,
+					ilv	= GetDetailedItemLevelInfo(itemLink),
+					slot = _G[equipSlot] or subclass
+					}				
+				local h,m = GetGameTime()
+				local numButtons = #LOOT_REPORT
+				for index = 1, numButtons do	
+					Menu[index]:SetText( h .. ":".. m .. " " .. color(LOOT_REPORT[index]["player"]) .. " " ..  LOOT_REPORT[index]["loot"] .. "<" .. LOOT_REPORT[index]["ilv"].. "-" .. LOOT_REPORT[index]["slot"].. ">")					
+					Menu[index]:Show()
+					Menu:SetSize(MENU_WIDTH, (MENU_BUFFER * 5) + (fontHeight * 3) + MENU_SPACING + ((BUTTON_HEIGHT + BUTTON_SPACING) * numButtons - BUTTON_SPACING))
+				end
+				Menu:Show()
 			end
-		end	
-		--print(Disabled)
-		-- filter test
-		if player and Disabled == 0 then 
-			if #LOOT_REPORT >= LOOT_CFG["maxloots"] then 
-				table.remove(LOOT_REPORT, 1)
-			end
-			LOOT_REPORT[#LOOT_REPORT + 1] = {
-				player = player,
-				loot = itemLink,
-				ilv	= GetDetailedItemLevelInfo(itemLink),
-				slot = _G[equipSlot] or subclass
-				}				
-			local h,m = GetGameTime()
-			local numButtons = #LOOT_REPORT
-			for index = 1, numButtons do	
-				Menu[index]:SetText( h .. ":".. m .. " " .. color(LOOT_REPORT[index]["player"]) .. " " ..  LOOT_REPORT[index]["loot"] .. "<" .. LOOT_REPORT[index]["ilv"].. "-" .. LOOT_REPORT[index]["slot"].. ">")					
-				Menu[index]:Show()
-				Menu:SetSize(MENU_WIDTH, (MENU_BUFFER * 5) + (fontHeight * 3) + MENU_SPACING + ((BUTTON_HEIGHT + BUTTON_SPACING) * numButtons - BUTTON_SPACING))
-			end
-			Menu:Show()
-		end	
+		end
 	end
 end)
 -- short cmd code '/lw'
