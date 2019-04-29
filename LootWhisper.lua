@@ -271,3 +271,4 @@ SlashCmdList["LOOTWHISPER"] = function(args)
 	local t3 = L['RESET ONLY - It only reset if you rightclicked the close button.']
 	print( t0..'\n'..'|cFF00FFFF'..t1..'\n'..t2..'\n'..t3..'|r')
 end
+--end
