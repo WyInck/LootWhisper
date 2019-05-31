@@ -11,4 +11,3 @@ Locales\enUS.lua
 Locales\zhCN.lua
 
 LootWhisper.lua
-Options.lua
