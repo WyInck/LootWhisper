@@ -2,7 +2,7 @@
 ## Title: LootWhisper
 ## Notes: Quick Whisper For a Equipments!
 ## Author: gmacro & Lombra
-## Version: 8.1.0
+## Version: 8.1.5
 
 Libs\LibStub\LibStub.lua
 Libs\AceLocale-3.0\AceLocale-3.0.lua
