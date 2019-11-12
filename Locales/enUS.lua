@@ -1,7 +1,6 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("LootWhisper", "enUS")
 if not L then return end
 L['LootWhisper'] = true
-L['LIVE'] = true
 L['ClickForIt'] = true
 L['CloseReset'] = true
 L['Hi, Do U need the'] = true
