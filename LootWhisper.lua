@@ -2,22 +2,21 @@
 -- http://www.wowinterface.com/forums/showthread.php?t=55021
 local L = LibStub("AceLocale-3.0"):GetLocale("LootWhisper")
 local ADDON = ...
+-- default font style
 local fontName, fontHeight, fontFlags = GameFontNormal:GetFont()
-local BUTTON_HEIGHT = fontHeight + 4
-local BUTTON_SPACING = 0
-local MENU_BUFFER = 10
-local MENU_SPACING = 1
-local MENU_WIDTH_EMPTY = 190
-local MENU_WIDTH = 450
+-- button height
+local buttonHeight = fontHeight + 4
+-- report tbl
 local LOOT_REPORT = {}
+-- loot filter
 local LOOT_CFG = {
 		maxloots = 20,    
 		-- menu shows max limit
-		myself = false,   
+		myself = true,   
 		-- show or not show player self loots
-		minquality = 3,   
+		minquality = 0,   
 		-- minquality comes from http://wowwiki.wikia.com/wiki/API_TYPE_Quality
-		equiponly = true,
+		equiponly = false,
 		-- show equiponly items
 		samearmor = true,
 		-- same armor
@@ -25,9 +24,6 @@ local LOOT_CFG = {
 		-- itemLevel filter
 	}
 -- colors 
-local string_format = string.format
-local string_find = string.find
-local string_sub = string.sub
 local function color(String)
 	if not UnitExists(String) then 
 		return string.format("\124cffff0000%s\124r", String) 
@@ -38,18 +34,24 @@ local function color(String)
 end
 -- main frame settings
 local Menu = CreateFrame("Frame", "LootWhisper", UIParent)
+	-- default hide
 	Menu:Hide()
+	-- couldnt drag out of the game window
 	Menu:SetClampedToScreen(true)
+	-- default strata
 	Menu:SetFrameStrata("DIALOG")
+	-- enable move
 	Menu:SetMovable(true)
-	Menu:SetToplevel(true)
-	Menu:SetUserPlaced(true)
+	-- enable mouse interact
 	Menu:EnableMouse(true)
+	-- register events
 	Menu:RegisterEvent('PLAYER_LOGIN')
 	Menu:RegisterEvent('CHAT_MSG_LOOT')
+	-- register drag
 	Menu:RegisterForDrag("LeftButton")
 	Menu:SetScript("OnDragStart", Menu.StartMoving)
 	Menu:SetScript("OnDragStop", Menu.StopMovingOrSizing)
+	-- background info
 	Menu:SetBackdrop({
 		bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
@@ -58,36 +60,20 @@ local Menu = CreateFrame("Frame", "LootWhisper", UIParent)
 	})
 	Menu:SetBackdropColor(.75, .75, .75)
 	Menu:SetBackdropBorderColor(0, 1, 1, 1)
--- menu button and text
-local resetClose = CreateFrame("Button", "resetClose", Menu, "UIPanelCloseButton")
-	resetClose:SetSize(24, 24)
-	resetClose:SetPoint("TOPRIGHT", -5, -5)
-local header_desc = Menu:CreateFontString()
-	header_desc:SetPoint("TOPLEFT", Menu, "TOPLEFT", MENU_BUFFER, -MENU_BUFFER)
-	header_desc:SetFont(fontName, fontHeight)
-	header_desc:SetTextColor(0, 1, 1, 1)
-	header_desc:SetText(L["LootWhisper"] .. "     " .. "8.0" .. "     " .. L["LIVE"])
-local click_desc = Menu:CreateFontString()
-	click_desc:SetPoint("BOTTOMLEFT", Menu, "BOTTOMLEFT", MENU_BUFFER, MENU_BUFFER)
-	click_desc:SetFont(fontName, fontHeight)
-	click_desc:SetTextColor(0, 1, 1, 1)
-	click_desc:SetText(L["ClickForIt"])
-
-local reset_desc = Menu:CreateFontString()
-	reset_desc:SetPoint("BOTTOMRIGHT", Menu, "BOTTOMRIGHT", -MENU_BUFFER, MENU_BUFFER)
-	reset_desc:SetFont(fontName, fontHeight)
-	reset_desc:SetTextColor(0, 1, 1, 1)
-	reset_desc:SetText(L["CloseReset"])
------------------------------------------------------------ functions -----------------------------------------------------------
--- initMenu
+	-- initMenu
 local function initMenu()
 	LOOT_REPORT = {}
 	for index = 1, LOOT_CFG["maxloots"] do
 		Menu[index]:SetText("")
 		Menu[index]:Hide()
 	end
-	Menu:SetSize(MENU_WIDTH, (MENU_BUFFER * 5) + (fontHeight * 3) + MENU_SPACING + ((BUTTON_HEIGHT + BUTTON_SPACING) - BUTTON_SPACING))
-	resetClose:SetScript('OnMouseUp', function(self, button) 		 
+	Menu:SetSize(450, (10 * 5) + (fontHeight * 3) + 1 + ((buttonHeight + 0) - 0))
+end
+-- menu button and text
+local reset_Close = CreateFrame("Button", "resetClose", Menu, "UIPanelCloseButton")
+	reset_Close:SetSize(24, 24)
+	reset_Close:SetPoint("TOPRIGHT", -5, -5)
+		resetClose:SetScript('OnMouseUp', function(self, button) 		 
 		if button == "LeftButton" then 
 			initMenu()
 			Menu:Hide()
@@ -95,8 +81,36 @@ local function initMenu()
 			initMenu()
 		end 
 	end)
-end
-
+-- title text
+local header_text = Menu:CreateFontString()
+	header_text:SetPoint("TOPLEFT", Menu, "TOPLEFT", 10, -10)
+	header_text:SetFont(fontName, fontHeight)
+	header_text:SetTextColor(0, 1, 1, 1)
+	header_text:SetText(L["LootWhisper"])
+-- patch text
+local patch_text = Menu:CreateFontString()
+	patch_text:SetPoint("TOP", Menu, "TOP", 0, -10)
+	patch_text:SetFont(fontName, fontHeight)
+	patch_text:SetTextColor(0, 1, 1, 1)
+	patch_text:SetText('8.3.0')
+-- vision text
+local vision_text = Menu:CreateFontString()
+	vision_text:SetPoint("TOPRIGHT", Menu, "TOPRIGHT", -30, -10)
+	vision_text:SetFont(fontName, fontHeight)
+	vision_text:SetTextColor(0, 1, 1, 1)
+	vision_text:SetText(L["RETAIL"])
+-- bottom left text
+local click_text = Menu:CreateFontString()
+	click_text:SetPoint("BOTTOMLEFT", Menu, "BOTTOMLEFT", 10, 10)
+	click_text:SetFont(fontName, fontHeight)
+	click_text:SetTextColor(0, 1, 1, 1)
+	click_text:SetText(L["ClickForIt"])
+-- bottom right text
+local reset_text = Menu:CreateFontString()
+	reset_text:SetPoint("BOTTOMRIGHT", Menu, "BOTTOMRIGHT", -15, 10)
+	reset_text:SetFont(fontName, fontHeight)
+	reset_text:SetTextColor(0, 1, 1, 1)
+	reset_text:SetText(L["CloseReset"])
 -- click button shows whisper msg
 local function Button_OnClick(self, button, down)
 	if button == "RightButton" or "LeftButton" then
@@ -125,12 +139,12 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 		for index = 1, LOOT_CFG["maxloots"] do
 			local button = CreateFrame("Button", nil, Menu)		
 			if index ~= 1 then
-				button:SetPoint("TOPLEFT", Menu[index - 1], "BOTTOMLEFT", 0, -BUTTON_SPACING)
+				button:SetPoint("TOPLEFT", Menu[index - 1], "BOTTOMLEFT", 0, -0)
 			else
-				button:SetPoint("TOPLEFT", header_desc, "BOTTOMLEFT", 0, -MENU_BUFFER)
+				button:SetPoint("TOPLEFT", header_text, "BOTTOMLEFT", 0, -10)
 			end
-			button:SetPoint("RIGHT", -MENU_BUFFER, 0)
-			button:SetHeight(BUTTON_HEIGHT)
+			button:SetPoint("RIGHT", -10, 0)
+			button:SetHeight(buttonHeight)
 			button:SetNormalFontObject("GameFontNormal")
 			button:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
 			button.index = index
@@ -233,7 +247,6 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 					end
 				end
 			end	
-			--print(Disabled)
 			-- filter test
 			if player and Disabled == 0 then 
 				if #LOOT_REPORT >= LOOT_CFG["maxloots"] then 
@@ -250,7 +263,7 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 				for index = 1, numButtons do	
 					Menu[index]:SetText( h .. ":".. m .. " " .. color(LOOT_REPORT[index]["player"]) .. " " ..  LOOT_REPORT[index]["loot"] .. "<" .. LOOT_REPORT[index]["ilv"].. "-" .. LOOT_REPORT[index]["slot"].. ">")					
 					Menu[index]:Show()
-					Menu:SetSize(MENU_WIDTH, (MENU_BUFFER * 5) + (fontHeight * 3) + MENU_SPACING + ((BUTTON_HEIGHT + BUTTON_SPACING) * numButtons - BUTTON_SPACING))
+					Menu:SetSize(450, (10 * 5) + (fontHeight * 3) + 1 + ((buttonHeight + 0) * numButtons - 0))
 				end
 				Menu:Show()
 			end
