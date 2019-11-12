@@ -3,6 +3,11 @@
 Addon of WoW - World of Warcraft , about the loot msg.
   * 一款魔兽世界插件，拾取相关。
 -----
+2019,11,12
+-----
+  * For 8.3.0
+    * 适配8.3.0
+    
 2019,04,29
 -----
   * Fixed a bug that pet string wot match the link.
