@@ -10,3 +10,4 @@ L['Welcome to use the LootWhisper, there is some tips you need to know:'] = true
 L['EQUIPMENTS - Left/Right Clicked will send the whisper message to the owner.'] = true
 L['RESET AND CLOESED - It will reset and close the menu if you leftclicked the close button.'] = true
 L['RESET ONLY - It only reset if you rightclicked the close button.'] = true
+L['RETAIL'] = true
