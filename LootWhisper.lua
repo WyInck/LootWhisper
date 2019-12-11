@@ -1,190 +1,131 @@
 -- thanks the coed author gmacro and Lombra's support
 -- http://www.wowinterface.com/forums/showthread.php?t=55021
-local L = LibStub("AceLocale-3.0"):GetLocale("LootWhisper")
-local ADDON = ...
--- default font style
-local fontName, fontHeight, fontFlags = GameFontNormal:GetFont()
--- button height
-local buttonHeight = fontHeight + 4
--- report tbl
-local LOOT_REPORT = {}
--- loot filter
-local LOOT_CFG = {
-		maxloots = 20,    
-		-- menu shows max limit
-		myself = true,   
-		-- show or not show player self loots
-		minquality = 0,   
-		-- minquality comes from http://wowwiki.wikia.com/wiki/API_TYPE_Quality
-		equiponly = false,
-		-- show equiponly items
-		samearmor = true,
-		-- same armor
-		ilvFilter = true
-		-- itemLevel filter
-	}
--- colors 
+local L = LibStub('AceLocale-3.0'):GetLocale('LootWhisper')
+local LootWhisper = LibStub('AceAddon-3.0'):NewAddon('LootWhisper')
+local fName, fHeight = GameFontNormal:GetFont()
+local btnHeight = fHeight + 4
+local fx, fy = 400, btnHeight * 5 
+local Loot = {}
 local function color(String)
 	if not UnitExists(String) then 
-		return string.format("\124cffff0000%s\124r", String) 
+		return string.format('\124cffff0000%s\124r', String) 
 	end
 	local _, class = UnitClass(String)
-	local color = _G["RAID_CLASS_COLORS"][class]
-	return string.format("\124cff%02x%02x%02x%s\124r", color.r*255, color.g*255, color.b*255, String)
+	local str = _G['RAID_CLASS_COLORS'][class]
+	return string.format('\124cff%02x%02x%02x%s\124r', str.r, str.g, str.b, str.a, String)
 end
--- main frame settings
-local Menu = CreateFrame("Frame", "LootWhisper", UIParent)
-	-- default hide
-	Menu:Hide()
-	-- couldnt drag out of the game window
-	Menu:SetClampedToScreen(true)
-	-- default strata
-	Menu:SetFrameStrata("DIALOG")
-	-- enable move
-	Menu:SetMovable(true)
-	-- enable mouse interact
-	Menu:EnableMouse(true)
-	-- register events
-	Menu:RegisterEvent('PLAYER_LOGIN')
-	Menu:RegisterEvent('CHAT_MSG_LOOT')
-	-- register drag
-	Menu:RegisterForDrag("LeftButton")
-	Menu:SetScript("OnDragStart", Menu.StartMoving)
-	Menu:SetScript("OnDragStop", Menu.StopMovingOrSizing)
-	-- background info
-	Menu:SetBackdrop({
-		bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-		title = true, titleSize = 32, edgeSize = 16,
-		insets = { left = 3, right = 3, top = 3, bottom = 3 }
+local f = CreateFrame('Frame', 'LootWhisper', UIParent)
+	f:Hide()
+	f:SetClampedToScreen(true)
+	f:SetFrameStrata('DIALOG')
+	f:SetMovable(true)
+	f:EnableMouse(true)
+	f:RegisterEvent('PLAYER_LOGIN')
+	f:RegisterEvent('CHAT_MSG_LOOT')
+	f:RegisterForDrag('LeftButton')
+	f:SetScript('OnDragStart', f.StartMoving)
+	f:SetScript('OnDragStop', f.StopMovingOrSizing)
+	f:SetBackdrop({
+		bgFile = 'Interface/DialogFrame/UI-DialogBox-Background',
+		edgeFile = 'Interface/Tooltips/UI-Tooltip-Border',
+		title = true, 
+		titleSize = 32, 
+		edgeSize = 16,
+		insets = { 
+			left = 3, 
+			right = 3, 
+			top = 3, 
+			bottom = 3 
+		}
 	})
-	Menu:SetBackdropColor(.75, .75, .75)
-	Menu:SetBackdropBorderColor(0, 1, 1, 1)
-	-- initMenu
-local function initMenu()
-	LOOT_REPORT = {}
-	for index = 1, LOOT_CFG["maxloots"] do
-		Menu[index]:SetText("")
-		Menu[index]:Hide()
+	f:SetBackdropColor(0, 0, 0, 1)
+	f:SetBackdropBorderColor(0, 1, 1, 1)
+local function Init()
+	Loot = {}
+	for i = 1, config.MAX_LOOTS do
+		f[i]:Hide()
 	end
-	Menu:SetSize(450, (10 * 5) + (fontHeight * 3) + 1 + ((buttonHeight + 0) - 0))
+	f:SetSize(fx, fy)
 end
--- menu button and text
-local reset_Close = CreateFrame("Button", "resetClose", Menu, "UIPanelCloseButton")
-	reset_Close:SetSize(24, 24)
-	reset_Close:SetPoint("TOPRIGHT", -5, -5)
-		resetClose:SetScript('OnMouseUp', function(self, button) 		 
-		if button == "LeftButton" then 
-			initMenu()
-			Menu:Hide()
-		elseif button == "RightButton" then 
-			initMenu()
+local resClose = CreateFrame('Button', 'resClose', f, 'UIPanelCloseButton')
+	resClose:SetSize(24, 24)
+	resClose:SetPoint('TOPRIGHT', -5, -5)
+	resClose:SetScript('OnMouseUp', function(self, button) 		 
+		if button == 'LeftButton' then 
+			Init()
+			f:Hide()
+		elseif button == 'RightButton' then 
+			Init()
 		end 
 	end)
--- title text
-local header_text = Menu:CreateFontString()
-	header_text:SetPoint("TOPLEFT", Menu, "TOPLEFT", 10, -10)
-	header_text:SetFont(fontName, fontHeight)
-	header_text:SetTextColor(0, 1, 1, 1)
-	header_text:SetText(L["LootWhisper"])
--- patch text
-local patch_text = Menu:CreateFontString()
-	patch_text:SetPoint("TOP", Menu, "TOP", 0, -10)
-	patch_text:SetFont(fontName, fontHeight)
-	patch_text:SetTextColor(0, 1, 1, 1)
-	patch_text:SetText('8.3.0')
--- vision text
-local vision_text = Menu:CreateFontString()
-	vision_text:SetPoint("TOPRIGHT", Menu, "TOPRIGHT", -30, -10)
-	vision_text:SetFont(fontName, fontHeight)
-	vision_text:SetTextColor(0, 1, 1, 1)
-	vision_text:SetText(L["RETAIL"])
--- bottom left text
-local click_text = Menu:CreateFontString()
-	click_text:SetPoint("BOTTOMLEFT", Menu, "BOTTOMLEFT", 10, 10)
-	click_text:SetFont(fontName, fontHeight)
-	click_text:SetTextColor(0, 1, 1, 1)
-	click_text:SetText(L["ClickForIt"])
--- bottom right text
-local reset_text = Menu:CreateFontString()
-	reset_text:SetPoint("BOTTOMRIGHT", Menu, "BOTTOMRIGHT", -15, 10)
-	reset_text:SetFont(fontName, fontHeight)
-	reset_text:SetTextColor(0, 1, 1, 1)
-	reset_text:SetText(L["CloseReset"])
--- click button shows whisper msg
-local function Button_OnClick(self, button, down)
-	if button == "RightButton" or "LeftButton" then
-		SendChatMessage(L["Hi, Do U need the"] .. LOOT_REPORT[self.index]["loot"] .. L["? I really need it if U dont, ty!"], "WHISPER", nil, LOOT_REPORT[self.index]["player"])				
-	end
-end
--- cursor enter button shows tips
-local function Button_OnEnter(self, button)
-	ShowUIPanel(GameTooltip)
-	if not GameTooltip:IsShown() then
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	end
-	GameTooltip:SetHyperlink(LOOT_REPORT[self.index]["loot"])
-end
--- cursor leave button hide tips
-local function Button_OnLeave()
-	local focus = GetMouseFocus() or WorldFrame
-	if focus ~= GameTooltip and focus:GetParent() ~= GameTooltip then
-		GameTooltip:Hide()
-	end
-end
--- main loot msg settings
-Menu:SetScript("OnEvent", function(self, event, ...) 
-	if event == "PLAYER_LOGIN" then	
-		Menu:UnregisterEvent(event)
-		for index = 1, LOOT_CFG["maxloots"] do
-			local button = CreateFrame("Button", nil, Menu)		
-			if index ~= 1 then
-				button:SetPoint("TOPLEFT", Menu[index - 1], "BOTTOMLEFT", 0, -0)
+local title = f:CreateFontString()
+	title:SetPoint('TOPLEFT', 10, -10)
+	title:SetFont(fName, fHeight)
+	title:SetTextColor(0, 1, 1, 1)
+	title:SetText(L['LootWhisper 8.3.0 Retail'])
+f:SetScript('OnEvent', function(self, event, ...) 
+	if event == 'PLAYER_LOGIN' then	
+		for i = 1, config.MAX_LOOTS do
+			local btn = CreateFrame('Button', nil, f)		
+			if i ~= 1 then
+				btn:SetPoint('TOPLEFT', f[i - 1], 'BOTTOMLEFT', 0, -0)
 			else
-				button:SetPoint("TOPLEFT", header_text, "BOTTOMLEFT", 0, -10)
+				btn:SetPoint('TOPLEFT', title, 'BOTTOMLEFT', 0, -10)
 			end
-			button:SetPoint("RIGHT", -10, 0)
-			button:SetHeight(buttonHeight)
-			button:SetNormalFontObject("GameFontNormal")
-			button:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
-			button.index = index
-			button:RegisterForClicks("AnyDown")
-			button:SetScript("OnClick", Button_OnClick)
-			button:SetScript("OnEnter", Button_OnEnter)
-			button:SetScript("OnLeave", Button_OnLeave)
-			local text = button:CreateFontString(ADDON .. "btn_font", nil, "GameFontNormal")
-			text:SetAllPoints()
-			text:SetJustifyH("LEFT")
-			text:SetJustifyV("MIDDLE")
-			text:SetTextColor(1, 1, 1, 1)
-			button:SetFontString(text)
-			Menu[index] = button
+			btn:SetPoint('RIGHT', 0, 0)
+			btn:SetHeight(btnHeight)
+			btn:SetNormalFontObject('GameFontNormal')
+			btn:SetHighlightTexture('Interface\\QuestFrame\\UI-QuestTitleHighlight')
+			btn.i = i
+			btn:RegisterForClicks('AnyDown')
+			btn:SetScript('OnClick', function()
+					if button == 'RightButton' or 'LeftButton' then
+						SendChatMessage(L['Hi, Do U need the'] .. Loot[i]['info'] .. L['? I really need it if U dont, ty!'], 'WHISPER', nil, Loot[i]['player'])				
+					end
+			end)
+			btn:SetScript('OnEnter', function(self)
+					ShowUIPanel(GameTooltip)
+					if not GameTooltip:IsShown() then
+						GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+					end
+					GameTooltip:SetHyperlink(Loot[i]['info'])
+			end)
+			btn:SetScript('OnLeave', function()
+					local focus = GetMouseFocus() or WorldFrame
+					if focus ~= GameTooltip and focus:GetParent() ~= GameTooltip then
+						GameTooltip:Hide()
+					end
+			end)
+			local txt = btn:CreateFontString(nil, nil, 'GameFontNormal')
+			txt:SetAllPoints()
+			txt:SetJustifyH('LEFT')
+			txt:SetJustifyV('MIDDLE')
+			btn:SetFontString(txt)
+			f[i] = btn
 		end
-	initMenu()
-	elseif event == "CHAT_MSG_LOOT" then
-		local lootstring, _, _, _, player = ...
-		local itemLink = string.match(lootstring,"|%x+|Hitem:.-|h.-|h|r")
+	Init()	
+	elseif event == 'CHAT_MSG_LOOT' then
+		local strLoot, _, _, _, player = ...
+		local itemLink = string.match(strLoot,'|%x+|Hitem:.-|h.-|h|r')
 		if itemLink then 
-			local itemString = string.match(itemLink, "item[%-?%d:]+")
-			local _, _, quality, _, _, class, subclass, _, equipSlot, texture, _, ClassID, SubClassID = GetItemInfo(itemString)
-			-- itemfilter
-			local Disabled = 0
-			if LOOT_CFG["myself"] == false and UnitInParty('player') == false then 
-				Disabled = 1
+			local itemString = string.match(itemLink, 'item[%-?%d:]+')
+			local _, _, quality, _, _, class, subClass, _, equipSlot, _, _, classId,  subClassId = GetItemInfo(itemString)
+			local limit = 1
+			if config.SHOW_SELVES == false and UnitInParty('player') == false then 
+				limit = 0
 			end
-			if LOOT_CFG['equiponly'] == true and (ClassID <= 1 or ClassID > 4 or ClassID == 3) then
-				Disabled = 1
+			if config.EQUIP_ONLY == true and (classId <= 1 or classId > 4 or classId == 3) then
+				limit = 0
 			end
-			if LOOT_CFG["minquality"] > quality then 
-				Disabled = 1
+			if config.MIN_QUALITY > quality then 
+				limit = 0
 			end
-			if LOOT_CFG['ilvFilter'] == true then
+			if config.ILV_FILTER == true then
 				for i = 1, 17 do
 					local itemLinkPlayer = GetInventoryItemLink('player', i)
 					if itemLinkPlayer then
 						local itemInfoPlayer = {GetItemInfo(itemLinkPlayer)} 
 						local itemInfo = {GetItemInfo(itemString)}
-						--local 1, 2, 3, 4, p, m = Name, Ilv, Slot, ItemType, player, msg
 						for kp1, vp1 in pairs(itemInfoPlayer)do
 							for k1, v1 in pairs(itemInfo) do
 								if kp1 == 1  and k1 == 1 then
@@ -197,8 +138,7 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 															for k2, v2 in pairs(itemInfo) do
 																if kp2 == 4 and k2 == 4 then
 																	if vp2 - 5 > v2 then
-																		Disabled = 1
-																		--print(kp2..'-'..vp2..'-'..k2..'-'..v2..'-'..Disabled)
+																		limit = 0
 																	end
 																end
 															end
@@ -212,7 +152,7 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 											for k2, v2 in pairs(itemInfo) do
 												if kp2 == 4 and k2 == 4 then
 													if vp2 > v2 then 
-														Disabled = 1
+														limit = 0
 													end
 												end
 											end
@@ -224,7 +164,7 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 					end
 				end
 			end
-			if LOOT_CFG['samearmor'] == true then
+			if config.SAME_ARMOR == true then
 				local slotsTab = {
 					'INVTYPE_HEAD',
 					'INVTYPE_SHOULDER',
@@ -238,50 +178,49 @@ Menu:SetScript("OnEvent", function(self, event, ...)
 				local playerItemLink = GetInventoryItemLink('player', 1)
 				if playerItemLink then 
 					local playerItemType = select(7, GetItemInfo(playerItemLink))
-					if subclass ~= playerItemType then 
+					if subClass ~= playerItemType then 
 						for _, v in pairs(slotsTab) do
 							if v == equipSlot then 
-								Disabled = 1
+								limit = 0
 							end
 						end
 					end
 				end
-			end	
-			-- filter test
-			if player and Disabled == 0 then 
-				if #LOOT_REPORT >= LOOT_CFG["maxloots"] then 
-					table.remove(LOOT_REPORT, 1)
+			end
+			if player and limit == 1 then
+				if #Loot >= config.MAX_LOOTS then 
+					table.remove(Loot, 1)
 				end
-				LOOT_REPORT[#LOOT_REPORT + 1] = {
+				Loot[#Loot + 1] = {
 					player = player,
-					loot = itemLink,
+					info = itemLink,
 					ilv	= GetDetailedItemLevelInfo(itemLink),
-					slot = _G[equipSlot] or subclass
+					slot = _G[equipSlot] or subClass
 					}				
-				local h,m = GetGameTime()
-				local numButtons = #LOOT_REPORT
-				for index = 1, numButtons do	
-					Menu[index]:SetText( h .. ":".. m .. " " .. color(LOOT_REPORT[index]["player"]) .. " " ..  LOOT_REPORT[index]["loot"] .. "<" .. LOOT_REPORT[index]["ilv"].. "-" .. LOOT_REPORT[index]["slot"].. ">")					
-					Menu[index]:Show()
-					Menu:SetSize(450, (10 * 5) + (fontHeight * 3) + 1 + ((buttonHeight + 0) * numButtons - 0))
+				local h, m = GetGameTime()
+				local loots = #Loot
+				for i = 1, loots do
+				if loots then print('check') end
+					f[i]:SetText(h ..':'.. m .. ' ' .. color(Loot[i]['player']) .. ' ' .. Loot[i]['info'] .. '<' .. Loot[i]['ilv'] .. '-' .. Loot[i]['slot'] .. '>')					
+					f[i]:Show()
+					f:SetSize(fx, btnHeight * loots + fy)
 				end
-				Menu:Show()
+				f:Show()
 			end
 		end
 	end
 end)
--- short cmd code '/lw'
-SLASH_LOOTWHISPER1 = "/lw"
-SlashCmdList["LOOTWHISPER"] = function(args) 
-	if not Menu:IsShown() then
-		Menu:ClearAllPoints()
-		Menu:SetPoint('CENTER',0,0)
-		Menu:Show()
+SLASH_LOOTWHISPER1 = '/lw'
+SlashCmdList['LOOTWHISPER'] = function()
+	if not f:IsShown() then
+		f:ClearAllPoints()
+		f:SetPoint('TOP', 0, 0)
+		f:Show()
 	end
 	local t0 = L['Welcome to use the LootWhisper, there is some tips you need to know:']
 	local t1 = L['EQUIPMENTS - Left/Right Clicked will send the whisper message to the owner.']
 	local t2 = L['RESET AND CLOESED - It will reset and close the menu if you leftclicked the close button.']
 	local t3 = L['RESET ONLY - It only reset if you rightclicked the close button.']
+	local t4 = L['CONFIG - /lwc']
 	print( t0..'\n'..'|cFF00FFFF'..t1..'\n'..t2..'\n'..t3..'|r')
 end
---end
