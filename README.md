@@ -2,6 +2,13 @@
 
 Addon of WoW - World of Warcraft , about the loot msg.
   * 一款魔兽世界插件，拾取相关。
+  
+-----
+2019,12,11
+-----
+  * fix a bug
+    * 修复BUG
+    
 -----
 2019,11,12
 -----
