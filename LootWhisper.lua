@@ -200,7 +200,6 @@ f:SetScript('OnEvent', function(self, event, ...)
 				local h, m = GetGameTime()
 				local loots = #Loot
 				for i = 1, loots do
-				if loots then print('check') end
 					f[i]:SetText(h ..':'.. m .. ' ' .. color(Loot[i]['player']) .. ' ' .. Loot[i]['info'] .. '<' .. Loot[i]['ilv'] .. '-' .. Loot[i]['slot'] .. '>')					
 					f[i]:Show()
 					f:SetSize(fx, btnHeight * loots + fy)
