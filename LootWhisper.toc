@@ -10,4 +10,5 @@ Libs\AceLocale-3.0\AceLocale-3.0.lua
 Locales\enUS.lua
 Locales\zhCN.lua
 
+Config.lua
 LootWhisper.lua
