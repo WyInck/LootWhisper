@@ -220,6 +220,5 @@ SlashCmdList['LOOTWHISPER'] = function()
 	local t1 = L['EQUIPMENTS - Left/Right Clicked will send the whisper message to the owner.']
 	local t2 = L['RESET AND CLOESED - It will reset and close the menu if you leftclicked the close button.']
 	local t3 = L['RESET ONLY - It only reset if you rightclicked the close button.']
-	local t4 = L['CONFIG - /lwc']
 	print( t0..'\n'..'|cFF00FFFF'..t1..'\n'..t2..'\n'..t3..'|r')
 end
