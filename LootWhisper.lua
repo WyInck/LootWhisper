@@ -12,7 +12,7 @@ local function color(String)
 	end
 	local _, class = UnitClass(String)
 	local str = _G['RAID_CLASS_COLORS'][class]
-	return string.format('\124cff%02x%02x%02x%s\124r', str.r, str.g, str.b, str.a, String)
+	return string.format('\124cff%02x%02x%02x%s\124r', str.r * 255, str.g * 255, str.b * 255, String)
 end
 local f = CreateFrame('Frame', 'LootWhisper', UIParent)
 	f:Hide()
@@ -20,9 +20,9 @@ local f = CreateFrame('Frame', 'LootWhisper', UIParent)
 	f:SetFrameStrata('DIALOG')
 	f:SetMovable(true)
 	f:EnableMouse(true)
+	f:RegisterForDrag('LeftButton')
 	f:RegisterEvent('PLAYER_LOGIN')
 	f:RegisterEvent('CHAT_MSG_LOOT')
-	f:RegisterForDrag('LeftButton')
 	f:SetScript('OnDragStart', f.StartMoving)
 	f:SetScript('OnDragStop', f.StopMovingOrSizing)
 	f:SetBackdrop({
@@ -65,6 +65,7 @@ local title = f:CreateFontString()
 	title:SetText(L['LootWhisper 8.3.0 Retail'])
 f:SetScript('OnEvent', function(self, event, ...) 
 	if event == 'PLAYER_LOGIN' then	
+		f:UnregisterEvent(event)
 		for i = 1, config.MAX_LOOTS do
 			local btn = CreateFrame('Button', nil, f)		
 			if i ~= 1 then
@@ -101,11 +102,13 @@ f:SetScript('OnEvent', function(self, event, ...)
 			txt:SetJustifyH('LEFT')
 			txt:SetJustifyV('MIDDLE')
 			btn:SetFontString(txt)
+			btn:Hide()
 			f[i] = btn
 		end
-	Init()	
+		f:SetSize(fx, fy)
 	elseif event == 'CHAT_MSG_LOOT' then
 		local strLoot, _, _, _, player = ...
+		if not player then return end
 		local itemLink = string.match(strLoot,'|%x+|Hitem:.-|h.-|h|r')
 		if itemLink then 
 			local itemString = string.match(itemLink, 'item[%-?%d:]+')
@@ -202,7 +205,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 				for i = 1, loots do
 					f[i]:SetText(h ..':'.. m .. ' ' .. color(Loot[i]['player']) .. ' ' .. Loot[i]['info'] .. '<' .. Loot[i]['ilv'] .. '-' .. Loot[i]['slot'] .. '>')					
 					f[i]:Show()
-					f:SetSize(fx, btnHeight * loots + fy)
+					f:SetSize(fx, btnHeight * loots + fy / 2)
 				end
 				f:Show()
 			end
