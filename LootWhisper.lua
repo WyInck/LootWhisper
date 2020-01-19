@@ -64,7 +64,8 @@ local title = f:CreateFontString()
 	title:SetTextColor(0, 1, 1, 1)
 	title:SetText(L['LootWhisper 8.3.0 Retail'])
 f:SetScript('OnEvent', function(self, event, ...) 
-	if event == 'PLAYER_LOGIN' then	
+	if event == 'PLAYER_LOGIN' then
+		print('|cFF00FFFFLOOtWHISPER TIPS:/lw to begin|r')
 		f:UnregisterEvent(event)
 		for i = 1, config.MAX_LOOTS do
 			local btn = CreateFrame('Button', nil, f)		
