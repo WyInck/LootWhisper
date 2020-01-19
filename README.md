@@ -4,6 +4,12 @@ Addon of WoW - World of Warcraft , about the loot msg.
   * 一款魔兽世界插件，拾取相关。
   
 -----
+2020,01,19
+-----
+  * fix a bug about class colors.
+    * 修复职业颜色报错。
+-----
+
 2019,12,11
 -----
   * fix a bug
