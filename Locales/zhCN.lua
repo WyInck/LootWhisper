@@ -7,3 +7,4 @@ L['Welcome to use the LootWhisper, there is some tips you need to know:'] = '欢
 L['EQUIPMENTS - Left/Right Clicked will send the whisper message to the owner.'] = '毛装 - 左/右键单击装备即可向装备所有者发送密语。'
 L['RESET AND CLOESED - It will reset and close the menu if you leftclicked the close button.'] = '重置且关闭 - 左键点击关闭按钮。'
 L['RESET ONLY - It only reset if you rightclicked the close button.'] = '仅重置 - 右键点击关闭按钮。'
+L['LOOtWHISPER TIPS:/lw to begin'] = '小贴士：毛装从/lw开始。'
