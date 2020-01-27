@@ -2,8 +2,13 @@
 
 Addon of WoW - World of Warcraft , about the loot msg.
   * 一款魔兽世界插件，拾取相关。
-  
+
+2020,01,19
 -----
+  * fix a bug that the panel wont show.
+    * 修复面板显示bug。
+-----
+
 2020,01,19
 -----
   * fix a bug about class colors.
