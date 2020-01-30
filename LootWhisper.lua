@@ -15,8 +15,8 @@ function LootWhisper:OnInitialize()
   f:SetMovable(true)
   f:EnableMouse(true)
   f:RegisterForDrag('LeftButton')
-  f:SetScript('OnDragStart', LootWhisper.StartMoving)
-  f:SetScript('OnDragStop', LootWhisper.StopMovingOrSizing)
+  f:SetScript('OnDragStart', f.StartMoving)
+  f:SetScript('OnDragStop', f.StopMovingOrSizing)
   f:SetBackdrop({
 		bgFile = 'Interface/DialogFrame/UI-DialogBox-Background',
     edgeFile = 'Interface/Tooltips/UI-Tooltip-Border',    
