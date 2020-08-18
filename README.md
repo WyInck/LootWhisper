@@ -6,6 +6,12 @@ Addon of WoW - World of Warcraft , about the loot msg.
 Besure that u have the Ace3 libs already.
   * 此插件为脱库版本，请确定你已经拥有了Ace3.
 
+2020,08,18
+-----
+  * for 9.0
+    * 适配9.0。
+-----
+
 2020,01,27
 -----
   * fix a bug that the panel wont show.
