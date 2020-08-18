@@ -1,6 +1,6 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("LootWhisper", "enUS")
 if not L then return end
-L['LootWhisper 8.3.0 Retail'] = true
+L['LootWhisper 9.0.1 Retail'] = true
 L['Hi, Do U need the'] = true
 L['? I really need it if U dont, ty!'] = true
 L['Welcome to use the lootwhisper, theres some tips u need to know:'] = true
