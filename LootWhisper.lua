@@ -41,7 +41,7 @@ function LootWhisper:OnInitialize()
   title:SetPoint('TOPLEFT', 10, -10)
   title:SetFont(fName, fHeight)
   title:SetTextColor(0, 1, 1, 1)
-  title:SetText(L['LootWhisper 8.3.0 Retail'])
+  title:SetText(L['LootWhisper 9.0.1 Retail'])
   f:Hide()
   -- contains
   for i = 1, config.MAX_LOOTS do
