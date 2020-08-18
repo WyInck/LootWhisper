@@ -7,7 +7,7 @@ function LootWhisper:OnInitialize()
 	Loot = {}
 	btnHeight = fHeight + 4
   fx, fy = 400, btnHeight * 5
-  f = CreateFrame('Frame', 'LootWhisper', UIParent)
+  f = CreateFrame('Frame', 'LootWhisper', UIParent, BackdropTemplateMixin and "BackdropTemplate")
   f:SetSize(fx, fy)
   f:SetPoint('TOP', 0, 0)
   f:SetClampedToScreen(true)
