@@ -1,6 +1,6 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("LootWhisper", "zhCN")
 if not L then return end
-L['LootWhisper 8.3.0 Retail'] = '毛装助手 8.3.0 正式服'
+L['LootWhisper 9.0.1 Retail'] = '毛装助手 9.0.1 正式服'
 L['Hi, Do U need the'] = '大佬你好，这东西'
 L['? I really need it if U dont, ty!'] = '你要吗？不要的话，我跪求一发，非常感谢！'
 L['Welcome to use the lootwhisper, theres some tips u need to know:'] = '欢迎使用毛装助手，说明如下：'
